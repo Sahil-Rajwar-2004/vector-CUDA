@@ -7,7 +7,7 @@
 
 ```cu
 #include <iostream>
-#include <vector_cuda.h>
+#include <vector_cuda.cu>
 using namespace std;
 
 int main(){
