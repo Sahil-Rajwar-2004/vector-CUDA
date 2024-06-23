@@ -24,7 +24,7 @@ int main(){
 
 ```bash
 vector: (3, 5, 7)
-vector:(-1, -1, -1)
+vector: (-1, -1, -1)
 ```
 
 
