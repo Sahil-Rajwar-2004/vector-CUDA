@@ -177,8 +177,161 @@ double Vector::norm(){
     cudaError(cudaMalloc(&d_result, sizeof(double)), "Failed to allocate the memory for d_result");
     normKernel<<<1,1>>>(d_x, d_y, d_z, d_result);
     cudaError(cudaGetLastError(), "Failed to launch normKernel");
-    cudaGetLastError();
+    cudaDeviceSynchronize();
     cudaError(cudaMemcpy(&h_result, d_result, sizeof(double), cudaMemcpyDeviceToHost), "Failed to copy the memory from d_result");
+    cudaError(cudaFree(d_result), "Failed to free the memory for d_result");
+    return h_result;
+}
+
+Vector Vector::proj(const Vector &onto){
+    Vector result(0.0, 0.0, 0.0);
+    projKernel<<<1,1>>>(d_x, d_y, d_z, onto.d_x, onto.d_y, onto.d_z, result.d_x, result.d_y, result.d_z);
+    cudaError(cudaGetLastError(), "Failed to launch projKernel");
+    cudaDeviceSynchronize();
+    result.cpyToHost();
+    return result;
+}
+
+bool Vector::operator==(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_result");
+    eqKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to launch eqKernel");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to free memory for d_result");
+    cudaError(cudaFree(d_result), "Failed to free memory for d_result");
+    return h_result;
+}
+
+bool Vector::operator!=(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_result");
+    neKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to launch neKernel");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to free memory for d_result");
+    cudaError(cudaFree(d_result), "Failed to free memory for d_result");
+    return h_result;
+}
+
+bool Vector::operator>=(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_result");
+    geKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to launch geKernel");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to free memory for d_result");
+    cudaError(cudaFree(d_result), "Failed to free memory for d_result");
+    return h_result;
+}
+
+bool Vector::operator>(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_result");
+    gtKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to launch gtKernel");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to free memory for d_result");
+    cudaError(cudaFree(d_result), "Failed to free memory for d_result");
+    return h_result;
+}
+
+bool Vector::operator<=(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_result");
+    leKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to free memory for d_result");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Faild to free memory for d_result");
+    cudaError(cudaFree(d_result), "Failed to free memory for d_result");
+    return h_result;
+}
+
+bool Vector::operator<(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_result");
+    ltKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to free memory for d_result");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to free memory for d_result");
+    cudaError(cudaFree(d_result), "Failed to free memory for d_result");
+    return h_result;
+}
+
+bool Vector::eq(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_reuslt");
+    eqKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to launch eqKernel");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to copy the memory from d_result");
+    cudaError(cudaFree(d_result), "Failed to free the memory for d_result");
+    return h_result;
+}
+
+bool Vector::ne(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_reuslt");
+    neKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to launch neKernel");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to copy the memory from d_result");
+    cudaError(cudaFree(d_result), "Failed to free the memory for d_result");
+    return h_result;
+}
+
+bool Vector::gt(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_reuslt");
+    gtKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to launch gtKernel");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to copy the memory from d_result");
+    cudaError(cudaFree(d_result), "Failed to free the memory for d_result");
+    return h_result;
+}
+
+bool Vector::ge(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_reuslt");
+    geKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to launch geKernel");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to copy the memory from d_result");
+    cudaError(cudaFree(d_result), "Failed to free the memory for d_result");
+    return h_result;
+}
+
+bool Vector::lt(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_reuslt");
+    ltKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to launch ltKernel");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to copy the memory from d_result");
+    cudaError(cudaFree(d_result), "Failed to free the memory for d_result");
+    return h_result;
+}
+
+bool Vector::le(const Vector &vec) const{
+    bool h_result;
+    bool *d_result;
+    cudaError(cudaMalloc(&d_result, sizeof(bool)), "Failed to allocate the memory for d_reuslt");
+    leKernel<<<1,1>>>(d_x, d_y, d_z, vec.d_x, vec.d_y, vec.d_z, d_result);
+    cudaError(cudaGetLastError(), "Failed to launch leKernel");
+    cudaDeviceSynchronize();
+    cudaError(cudaMemcpy(&h_result, d_result, sizeof(bool), cudaMemcpyDeviceToHost), "Failed to copy the memory from d_result");
     cudaError(cudaFree(d_result), "Failed to free the memory for d_result");
     return h_result;
 }
@@ -288,6 +441,44 @@ __global__ void normKernel(double *d_x, double *d_y, double *d_z, double *result
     *result = sqrt((*d_x * *d_x) + (*d_y * *d_y) + (*d_z * *d_z));
 }
 
+__global__ void eqKernel(double *d_x1, double *d_y1, double *d_z1, double *d_x2, double *d_y2, double *d_z2, bool *isEq){
+    double norm1 = sqrt((*d_x1 * *d_x1) + (*d_y1 * *d_y1) + (*d_z1 * *d_z1));
+    double norm2 = sqrt((*d_x2 * *d_x2) + (*d_y2 * *d_y2) + (*d_z2 * *d_z2));
+    const double epsilon = 1e-8;
+    *isEq = (fabs(norm1 - norm2) < epsilon);
+}
+
+__global__ void neKernel(double *d_x1, double *d_y1, double *d_z1, double *d_x2, double *d_y2, double *d_z2, bool *isNe){
+    double norm1 = sqrt((*d_x1 * *d_x1) + (*d_y1 * *d_y1) + (*d_z1 * *d_z1));
+    double norm2 = sqrt((*d_x2 * *d_x2) + (*d_y2 * *d_y2) + (*d_z2 * *d_z2));
+    const double epsilon = 1e-8;
+    *isNe = (fabs(norm1 - norm2) >= epsilon);
+}
+
+__global__ void gtKernel(double *d_x1, double *d_y1, double *d_z1, double *d_x2, double *d_y2, double *d_z2, bool *isGt){
+    double norm1 = sqrt((*d_x1 * *d_x1) + (*d_y1 * *d_y1) + (*d_z1 * *d_z1));
+    double norm2 = sqrt((*d_x2 * *d_x2) + (*d_y2 * *d_y2) + (*d_z2 * *d_z2));
+    *isGt = (norm1 > norm2);
+}
+
+__global__ void geKernel(double *d_x1, double *d_y1, double *d_z1, double *d_x2, double *d_y2, double *d_z2, bool *isGe){
+    double norm1 = sqrt((*d_x1 * *d_x1) + (*d_y1 * *d_y1) + (*d_z1 * *d_z1));
+    double norm2 = sqrt((*d_x2 * *d_x2) + (*d_y2 * *d_y2) + (*d_z2 * *d_z2));
+    *isGe = (norm1 >= norm2);
+}
+
+__global__ void ltKernel(double *d_x1, double *d_y1, double *d_z1, double *d_x2, double *d_y2, double *d_z2, bool *isLt){
+    double norm1 = sqrt((*d_x1 * *d_x1) + (*d_y1 * *d_y1) + (*d_z1 * *d_z1));
+    double norm2 = sqrt((*d_x2 * *d_x2) + (*d_y2 * *d_y2) + (*d_z2 * *d_z2));
+    *isLt = (norm1 < norm2);
+}
+
+__global__ void leKernel(double *d_x1, double *d_y1, double *d_z1, double *d_x2, double *d_y2, double *d_z2, bool *isLe){
+    double norm1 = sqrt((*d_x1 * *d_x1) + (*d_y1 * *d_y1) + (*d_z1 * *d_z1));
+    double norm2 = sqrt((*d_x2 * *d_x2) + (*d_y2 * *d_y2) + (*d_z2 * *d_z2));
+    *isLe = (norm1 <= norm2);
+}
+
 __global__ void unitKernel(double *d_x, double *d_y, double *d_z, double *r_d_x, double *r_d_y, double *r_d_z){
     double norm = sqrt((*d_x * *d_x) + (*d_y * *d_y) + (*d_z * *d_z));
     if(norm != 0.0){
@@ -300,5 +491,14 @@ __global__ void unitKernel(double *d_x, double *d_y, double *d_z, double *r_d_x,
         *r_d_z = 0.0;
         printf("Error: Attempted to normalize a zero vector!\n");
     }
+}
+
+__global__ void projKernel(double *d_x1, double *d_y1, double *d_z1, double *d_x2, double *d_y2, double *d_z2, double *r_d_x, double *r_d_y, double *r_d_z){
+    double dotProd1 = (*d_x1 * *d_x2) + (*d_y1 * *d_y2) + (*d_z1 * *d_z2);
+    double dotProd2 = (*d_x2 * *d_x2) + (*d_y2 * *d_y2) + (*d_z1 * *d_z2);
+    double scalar = dotProd1 / dotProd2;
+    *r_d_x = scalar * *d_x2;
+    *r_d_y = scalar * *d_y2;
+    *r_d_z = scalar * *d_z2;
 }
 
